@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <syslog.h>
 
 #include "b64.h"
 #include "debug.h"
@@ -1249,7 +1250,7 @@ int do_authentication(const cfg_t *cfg, const device_t *devices,
           }
           r = fido_assert_verify(assert, 0, pk.type, pk.ptr);
           if (r == FIDO_OK) {
-            debug_dbg(cfg, "Successful FIDO authentication with publicKey %s (idx %u)", devices[i].publicKey, i);
+            pam_syslog(pamh, LOG_INFO, "Successful FIDO authentication with publicKey %s (idx %u)", devices[i].publicKey, i);
             retval = 1;
             goto out;
           }
