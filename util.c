@@ -230,13 +230,8 @@ static int parse_native_format(const cfg_t *cfg, const char *username,
     if (s_user && strcmp(username, s_user) == 0) {
       debug_dbg(cfg, "Matched user: %s", s_user);
 
-      // only keep last line for this user
-      for (i = 0; i < *n_devs; i++) {
-        reset_device(&devices[i]);
-      }
-      *n_devs = 0;
-
-      i = 0;
+      // keep all lines each user, concatenating later auth patterns
+      i = n_devs;
       while ((s_credential = strtok_r(NULL, ":", &saveptr))) {
         if ((*n_devs)++ > cfg->max_devs - 1) {
           *n_devs = cfg->max_devs;
@@ -1254,6 +1249,7 @@ int do_authentication(const cfg_t *cfg, const device_t *devices,
           }
           r = fido_assert_verify(assert, 0, pk.type, pk.ptr);
           if (r == FIDO_OK) {
+            debug_dbg(cfg, "Successful FIDO authentication with publicKey %s (idx %u)", devices[i].publicKey, i);
             retval = 1;
             goto out;
           }
