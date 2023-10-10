@@ -21,6 +21,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <syslog.h>
+#include <security/pam_ext.h>
 
 #include "b64.h"
 #include "debug.h"
@@ -232,7 +233,7 @@ static int parse_native_format(const cfg_t *cfg, const char *username,
       debug_dbg(cfg, "Matched user: %s", s_user);
 
       // keep all lines each user, concatenating later auth patterns
-      i = n_devs;
+      i = *n_devs;
       while ((s_credential = strtok_r(NULL, ":", &saveptr))) {
         if ((*n_devs)++ > cfg->max_devs - 1) {
           *n_devs = cfg->max_devs;
